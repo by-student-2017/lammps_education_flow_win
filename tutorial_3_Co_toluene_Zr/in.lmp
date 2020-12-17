@@ -3,8 +3,8 @@
 clear
 
 #-----------settings----------
-variable        yhi   equal  23.15
-variable        ylo   equal -23.15
+variable        yhi   equal  25.45
+variable        ylo   equal -25.45
 
 variable        t     equal 473.15   # K
 variable        pres  index 10000.0  # atm unit, 1 atm = 1 bar = 0.1 MPa
@@ -20,14 +20,14 @@ read_data       data.in
 replicate       1 1 1
 timestep        ${dt}
 
-mass 1 12.0107 # C
-mass 2 63.546  # Cu
-mass 3 1.00794 # H
-mass 4 58.70   # Ni
+mass 1 12.0107  # C
+mass 2 58.9332  # Co
+mass 3 1.00794  # H
+mass 4 91.22    # Zr
 
 # ----- Potential settings -----
 pair_style      reax/c lmp_control
-pair_coeff      * * ffield.reax.CHONSSiPtZrNiCuCoHeArKrXe C Cu H Ni
+pair_coeff      * * ffield.reax.CHONSSiPtZrNiCuCoHeArKrXe C Co H Zr
 fix             f1 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
 
 group           upper type 2
@@ -67,7 +67,7 @@ thermo          100
 thermo_style    custom step temp c_tilt epair etotal press pxy
 
 dump            d1 all cfg 100 cfg/run1.*.cfg mass type xs ys zs id type q
-dump_modify     d1 element C Cu H Ni
+dump_modify     d1 element C Co H Zr
 
 run             20000
 
@@ -81,6 +81,6 @@ thermo_style    custom step temp pxy v_visc f_vave
 thermo_modify   temp tilt
 
 dump            d2 all cfg 100 cfg/run2.*.cfg mass type xs ys zs id type q
-dump_modify     d2 element C Cu H Ni
+dump_modify     d2 element C Co H Zr
 
 run             50000

@@ -3,12 +3,16 @@
 clear
 
 #-----------settings----------
-variable        yhi   equal  23.15
-variable        ylo   equal -23.15
+variable        x equal 7
+variable        y equal 20
+variable        z equal 4
 
-variable        t     equal 473.15   # K
+variable        yhi   equal  22.00
+variable        ylo   equal -22.00
+
+variable        t     equal 313.15   # K
 variable        pres  index 10000.0  # atm unit, 1 atm = 1 bar = 0.1 MPa
-variable        srate equal 2.7/100.0 # shift speed, Angstrom/fs
+variable        srate equal 2.7/1000.0 # shift speed, Angstrom/fs
 
 variable        dt    equal 0.5      # 0.5 fs
 
@@ -16,24 +20,41 @@ variable        dt    equal 0.5      # 0.5 fs
 units           real
 atom_style      charge
 dimension       3
-read_data       data.in
-replicate       1 1 1
+#read_data       data.in
+#replicate       1 1 1
 timestep        ${dt}
 
-mass 1 12.0107 # C
-mass 2 63.546  # Cu
-mass 3 1.00794 # H
-mass 4 58.70   # Ni
+lattice         bcc 4.0
+region          simbox block 0 $x 0 $y 0 $z
+create_box      3 simbox
+create_atoms    1 box
+set type 1*3 charge 0.0
+
+mass 1 26.98154 # Al
+mass 2 12.0107  # C
+mass 3 40.078   # Ca
+#mass 4 1.00794  # H
+#mass 5 15.9994  # O
+#mass 6 28.0855  # Si
 
 # ----- Potential settings -----
 pair_style      reax/c lmp_control
-pair_coeff      * * ffield.reax.CHONSSiPtZrNiCuCoHeArKrXe C Cu H Ni
+pair_coeff      * * ffield.reax.CHONSSiCaCsKSrNaMgAl Al C Ca
+#pair_coeff      * * ffield.reax.CHONSSiCaCsKSrNaMgAl Al C Ca H O Si
 fix             f1 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
 
-group           upper type 2
-group           lower type 4
+region          lower block INF INF INF 4.0 INF INF
+region          upper block INF INF 16.0 INF INF INF
+group           lower region lower
+group           upper region upper
+set             group lower type 3
+set             group upper type 1
 group           wall union lower upper
 group           flow subtract all wall
+#group           upper type 1
+#group           lower type 3
+#group           wall union lower upper
+#group           flow subtract all wall
 
 velocity        flow create $t 97287
 velocity        upper set ${srate} 0.0 0.0 units box
@@ -67,7 +88,7 @@ thermo          100
 thermo_style    custom step temp c_tilt epair etotal press pxy
 
 dump            d1 all cfg 100 cfg/run1.*.cfg mass type xs ys zs id type q
-dump_modify     d1 element C Cu H Ni
+dump_modify     d1 element Al C Ca H O Si
 
 run             20000
 
@@ -81,6 +102,6 @@ thermo_style    custom step temp pxy v_visc f_vave
 thermo_modify   temp tilt
 
 dump            d2 all cfg 100 cfg/run2.*.cfg mass type xs ys zs id type q
-dump_modify     d2 element C Cu H Ni
+dump_modify     d2 element Al C Ca H O Si
 
 run             50000

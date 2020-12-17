@@ -6,7 +6,7 @@ clear
 variable        yhi   equal  19.55
 variable        ylo   equal -19.55
 
-variable        t     equal 313.15   # K
+variable        t     equal 473.15   # K
 variable        pres  index 10000.0  # atm unit, 1 atm = 1 bar = 0.1 MPa
 variable        srate equal 2.7/100.0 # shift speed, Angstrom/fs
 
