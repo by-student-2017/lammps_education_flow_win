@@ -14,7 +14,7 @@ variable        t     equal 313.15   # K
 variable        pres  index 10000.0  # atm unit, 1 atm = 1 bar = 0.1 MPa
 variable        srate equal 2.7/1000.0 # shift speed, Angstrom/fs
 
-variable        dt    equal 0.5      # 0.5 fs
+variable        dt    equal 0.25      # 0.25 fs
 
 #-----------problem setup----------
 units           real
@@ -72,7 +72,7 @@ compute         flow flow temp
 
 #----------equilibration run----------
 fix             1 all nve
-fix             2 flow langevin $t $t $(200.0*dt) 498094 
+fix             2 flow langevin $t $t 100.0 498094 
 fix_modify      2 temp thermal
 
 fix             3 wall setforce 0.0 0.0 0.0
